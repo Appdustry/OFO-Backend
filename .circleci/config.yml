@@ -1,0 +1,30 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+  codecov: codecov/codecov@1.0.5
+jobs:
+  build-and-test:
+    executor:
+      name: "node/default"
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: 
+                name: Install dependencies
+                command: npm install
+            - run: 
+                name: Run tests
+                command: npm run test:ci
+                environment:
+                  JEST_JUNIT_OUTPUT_DIR: "reports/junit/js-test-results.xml"
+      - store_test_results:
+          path: "reports/junit/js-test-results.xml"
+      - codecov/upload:
+          file: coverage/*.json
+      - store_artifacts:
+          path: coverage
+workflows:
+    build-and-test:
+      jobs:
+        - build-and-test

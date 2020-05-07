@@ -1,0 +1,150 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type DateEntity {
+  id: Int!
+  startDate: DateTime!
+  endDate: DateTime!
+  users: [EventUserEntity!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type EventUserEntity {
+  id: Int!
+  dates: [DateEntity!]
+  platforms: [PlatformEntity!]
+}
+
+type PlatformEntity {
+  id: Int!
+  title: String!
+  users: [EventUserEntity!]!
+  event: EventEntity
+}
+
+type EventEntity {
+  id: Int!
+  title: String!
+  eventId: String!
+  optimalDate: DateEntity
+  optimalPlatform: PlatformEntity
+  voted_count: Int!
+  users: [EventUserEntity!]!
+  platforms: [PlatformEntity!]!
+  dates: [DateEntity!]
+}
+
+type DateResponse {
+  id: Int!
+  startDate: DateTime!
+  endDate: DateTime!
+}
+
+type PlatformResponse {
+  id: Int!
+  title: String!
+}
+
+type EventResponse {
+  id: Int!
+  title: String!
+  eventId: String!
+  optimalDate: DateEntity
+  optimalPlatform: PlatformResponse
+  dates: [DateResponse!]
+  platforms: [PlatformResponse!]
+}
+
+type GetUserResponse {
+  id: Int!
+  dates: [DateResponse!]
+  platforms: [PlatformEntity!]
+  event: EventResponse
+}
+
+type Query {
+  events: [EventEntity!]!
+  event(input: GetEventInput!): EventEntity!
+  eventUsers: [GetUserResponse!]!
+  eventUser(id: Int!): GetUserResponse!
+}
+
+input GetEventInput {
+  id: Int
+  eventId: String
+}
+
+type Mutation {
+  createEvent(input: CreateEventInput!): EventEntity!
+  addPlatform(input: AddPlatformInput!): GetUserResponse!
+  addPlatforms(input: AddPlatformsInput!): GetUserResponse!
+  addDate(input: AddDateInput!): GetUserResponse!
+  addDates(input: AddDatesInput!): GetUserResponse!
+  createEventUser(input: EventUserInput!): GetUserResponse!
+  sendEmails(input: SendEmailsInput!): Boolean!
+}
+
+input CreateEventInput {
+  title: String!
+  users: [EventUserInput!]
+  platforms: [PlatformInput!]
+}
+
+input EventUserInput {
+  dates: [DateInput!]
+  platforms: [PlatformInput!]
+  eventId: Int!
+}
+
+input DateInput {
+  id: Int
+  startDate: DateTime!
+  endDate: DateTime!
+  user: EventUserInput
+}
+
+input PlatformInput {
+  title: String!
+}
+
+input AddPlatformInput {
+  userId: Int!
+  platform: PlatformInput
+  platformId: Int
+}
+
+input AddPlatformsInput {
+  userId: Int!
+  platforms: [PlatformInput!]
+  platformIds: [Int!]
+}
+
+input AddDateInput {
+  userId: Int!
+  date: DateInput
+  dateId: Int
+}
+
+input AddDatesInput {
+  userId: Int!
+  dates: [DateInput!]
+  dateIds: [Int!]
+}
+
+input SendEmailsInput {
+  eventId: Int!
+  emails: [String!]!
+  link: String!
+}
+
+type Subscription {
+  eventUpdated: EventEntity!
+  eventCreated: EventEntity!
+  userUpdated: GetUserResponse!
+  userCreated: GetUserResponse!
+}
